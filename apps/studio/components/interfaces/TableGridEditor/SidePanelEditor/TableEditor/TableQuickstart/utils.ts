@@ -43,5 +43,6 @@ export function convertTableSuggestionToTableField(
     name: table.tableName,
     comment: table.rationale || '',
     columns,
+    quickstartSource: table.source,
   }
 }

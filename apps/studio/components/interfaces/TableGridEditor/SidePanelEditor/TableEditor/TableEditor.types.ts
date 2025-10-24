@@ -1,5 +1,6 @@
 import type { Dictionary } from 'types'
 import type { ColumnField } from '../SidePanelEditor.types'
+import type { QuickstartVariant, TableSource } from './TableQuickstart/types'
 
 export interface TableField {
   id: number
@@ -8,6 +9,8 @@ export interface TableField {
   columns: ColumnField[]
   isRLSEnabled: boolean
   isRealtimeEnabled: boolean
+  quickstartSource?: TableSource
+  quickstartVariant?: QuickstartVariant
 }
 
 export interface ImportContent {

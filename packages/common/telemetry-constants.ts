@@ -2022,6 +2022,234 @@ export interface CommandMenuCommandSelectedEvent {
 }
 
 /**
+ * User was exposed to the table quickstart experiment.
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (NewTab)
+ */
+export interface TableQuickstartViewedEvent {
+  action: 'table_quickstart_viewed'
+  properties: {
+    /**
+     * Which variation the user was shown: ai, templates, assistant, or control
+     */
+    variant: 'ai' | 'templates' | 'assistant' | 'control'
+  }
+  groups: TelemetryGroups
+}
+
+/**
+ * User dismissed the table quickstart prompt.
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (NewTab)
+ */
+export interface TableQuickstartDismissedEvent {
+  action: 'table_quickstart_dismissed'
+  properties: {
+    /**
+     * Which variation was dismissed
+     */
+    variant: 'ai' | 'templates' | 'assistant'
+    /**
+     * Whether user had any interaction before dismissing
+     */
+    hadInteraction: boolean
+  }
+  groups: TelemetryGroups
+}
+
+/**
+ * User submitted a prompt in the AI quickstart variation.
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (QuickstartAIWidget)
+ */
+export interface TableQuickstartAIPromptSubmittedEvent {
+  action: 'table_quickstart_ai_prompt_submitted'
+  properties: {
+    /**
+     * Length of the AI prompt
+     */
+    promptLength: number
+    /**
+     * Whether this was triggered by a quick idea button
+     */
+    wasQuickIdea: boolean
+  }
+  groups: TelemetryGroups
+}
+
+/**
+ * AI table generation completed (success or failure).
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (QuickstartAIWidget)
+ */
+export interface TableQuickstartAIGenerationCompletedEvent {
+  action: 'table_quickstart_ai_generation_completed'
+  properties: {
+    /**
+     * Whether generation succeeded
+     */
+    success: boolean
+    /**
+     * Number of tables generated (0 if failed)
+     */
+    tablesGenerated: number
+    /**
+     * Length of the prompt used
+     */
+    promptLength: number
+    /**
+     * Error message if failed
+     */
+    errorMessage?: string
+  }
+  groups: TelemetryGroups
+}
+
+/**
+ * User selected an AI-generated table template.
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (QuickstartAIWidget)
+ */
+export interface TableQuickstartAITemplateSelectedEvent {
+  action: 'table_quickstart_ai_template_selected'
+  properties: {
+    /**
+     * Name of the selected table
+     */
+    tableName: string
+    /**
+     * Number of columns in the template
+     */
+    columnCount: number
+  }
+  groups: TelemetryGroups
+}
+
+/**
+ * User clicked a quick idea button in the AI variation.
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (QuickstartAIWidget)
+ */
+export interface TableQuickstartQuickIdeaClickedEvent {
+  action: 'table_quickstart_quick_idea_clicked'
+  properties: {
+    /**
+     * Text of the quick idea clicked
+     */
+    ideaText: string
+  }
+  groups: TelemetryGroups
+}
+
+/**
+ * User selected a category in the templates variation.
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (QuickstartTemplatesWidget)
+ */
+export interface TableQuickstartCategorySelectedEvent {
+  action: 'table_quickstart_category_selected'
+  properties: {
+    /**
+     * Name of the category selected
+     */
+    categoryName: string
+  }
+  groups: TelemetryGroups
+}
+
+/**
+ * User selected a template from the templates variation.
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (QuickstartTemplatesWidget)
+ */
+export interface TableQuickstartTemplateSelectedEvent {
+  action: 'table_quickstart_template_selected'
+  properties: {
+    /**
+     * Name of the template selected
+     */
+    templateName: string
+    /**
+     * Category the template belongs to
+     */
+    categoryName: string
+    /**
+     * Number of columns in the template
+     */
+    columnCount: number
+  }
+  groups: TelemetryGroups
+}
+
+/**
+ * User clicked the assistant button in the assistant variation.
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (NewTab)
+ */
+export interface TableQuickstartAssistantOpenedEvent {
+  action: 'table_quickstart_assistant_opened'
+  properties: {
+    /**
+     * Whether the assistant chat was successfully created
+     */
+    chatCreated: boolean
+  }
+  groups: TelemetryGroups
+}
+
+/**
+ * User created a table, tracking whether quickstart was used.
+ *
+ * @group Events
+ * @source studio
+ * @page /dashboard/project/{ref}/editor (SidePanelEditor)
+ */
+export interface TableQuickstartTableCreatedEvent {
+  action: 'table_quickstart_table_created'
+  properties: {
+    /**
+     * Which quickstart variant user was in
+     */
+    variant: 'ai' | 'templates' | 'assistant' | 'control'
+    /**
+     * How the table was created
+     */
+    source: 'ai' | 'template' | 'assistant' | 'manual'
+    /**
+     * Name of the created table
+     */
+    tableName: string
+    /**
+     * Number of columns in the table
+     */
+    columnCount: number
+    /**
+     * Whether user used quickstart for this table
+     */
+    hadQuickstart: boolean
+  }
+  groups: TelemetryGroups
+}
+
+/**
  * @hidden
  */
 export type TelemetryEvent =
@@ -2134,6 +2362,16 @@ export type TelemetryEvent =
   | TableCreatedEvent
   | TableDataAddedEvent
   | TableRLSEnabledEvent
+  | TableQuickstartViewedEvent
+  | TableQuickstartDismissedEvent
+  | TableQuickstartAIPromptSubmittedEvent
+  | TableQuickstartAIGenerationCompletedEvent
+  | TableQuickstartAITemplateSelectedEvent
+  | TableQuickstartQuickIdeaClickedEvent
+  | TableQuickstartCategorySelectedEvent
+  | TableQuickstartTemplateSelectedEvent
+  | TableQuickstartAssistantOpenedEvent
+  | TableQuickstartTableCreatedEvent
   | AuthUsersSearchSubmittedEvent
   | CommandMenuOpenedEvent
   | CommandMenuSearchSubmittedEvent

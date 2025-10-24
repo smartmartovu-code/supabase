@@ -24,6 +24,7 @@ import { getTables } from 'data/tables/tables-query'
 import { useSelectedOrganizationQuery } from 'hooks/misc/useSelectedOrganization'
 import { useSelectedProjectQuery } from 'hooks/misc/useSelectedProject'
 import { useUrlState } from 'hooks/ui/useUrlState'
+import { useTrack } from 'lib/telemetry/track'
 import { useGetImpersonatedRoleState } from 'state/role-impersonation-state'
 import { useTableEditorStateSnapshot } from 'state/table-editor'
 import { createTabId, useTabsStateSnapshot } from 'state/tabs'
@@ -72,6 +73,7 @@ const SidePanelEditor = ({
   const snap = useTableEditorStateSnapshot()
   const tabsSnap = useTabsStateSnapshot()
   const [_, setParams] = useUrlState({ arrayKeys: ['filter', 'sort'] })
+  const track = useTrack()
 
   const queryClient = useQueryClient()
   const { data: project } = useSelectedProjectQuery()
@@ -443,6 +445,17 @@ const SidePanelEditor = ({
           `Table ${tableToDuplicate.name} has been successfully duplicated into ${table.name}!`,
           { id: toastId }
         )
+
+        const templateData =
+          snap.sidePanel?.type === 'table' ? snap.sidePanel.templateData : undefined
+        track('table_quickstart_table_created', {
+          variant: templateData?.quickstartVariant ?? 'control',
+          source: 'manual',
+          tableName: table.name,
+          columnCount: tableToDuplicate.columns?.length ?? 0,
+          hadQuickstart: false,
+        })
+
         onTableCreated(table)
       } else if (isNewRecord) {
         toastId = toast.loading(`Creating new table: ${payload.name}...`)
@@ -466,6 +479,18 @@ const SidePanelEditor = ({
         ])
 
         toast.success(`Table ${table.name} is good to go!`, { id: toastId })
+
+        const templateData =
+          snap.sidePanel?.type === 'table' ? snap.sidePanel.templateData : undefined
+        const hadQuickstart = !!templateData?.quickstartSource
+        track('table_quickstart_table_created', {
+          variant: templateData?.quickstartVariant ?? 'control',
+          source: templateData?.quickstartSource ?? 'manual',
+          tableName: table.name,
+          columnCount: columns.length,
+          hadQuickstart,
+        })
+
         onTableCreated(table)
       } else if (selectedTable) {
         toastId = toast.loading(`Updating table: ${selectedTable?.name}...`)
